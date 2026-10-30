@@ -1,0 +1,375 @@
+{
+ "n_evenings": 2020,
+ "confusion_odeh": {
+  "0": {
+   "D": 434,
+   "C": 73,
+   "B": 3
+  },
+  "1": {
+   "B": 64,
+   "C": 86,
+   "D": 20
+  },
+  "2": {
+   "A": 59,
+   "B": 112,
+   "C": 7
+  },
+  "3": {
+   "A": 1158,
+   "B": 4
+  }
+ },
+ "confusion_yallop": {
+  "0": {
+   "F": 487,
+   "E": 11,
+   "D": 9,
+   "C": 3
+  },
+  "1": {
+   "C": 51,
+   "E": 24,
+   "F": 58,
+   "B": 9,
+   "D": 28
+  },
+  "2": {
+   "A": 50,
+   "B": 88,
+   "D": 5,
+   "C": 33,
+   "E": 2
+  },
+  "3": {
+   "A": 1158,
+   "B": 4
+  }
+ },
+ "binary_majdi_ge1_vs_odeh_AB": {
+  "tp": 1397,
+  "tn": 507,
+  "fp": 113,
+  "fn": 3,
+  "accuracy": 0.9426
+ },
+ "binary_majdi_ge2_vs_odeh_AB": {
+  "tp": 1333,
+  "tn": 613,
+  "fp": 7,
+  "fn": 67,
+  "accuracy": 0.9634
+ },
+ "binary_majdi_eq3_vs_odeh_A": {
+  "tp": 1158,
+  "tn": 799,
+  "fp": 4,
+  "fn": 59,
+  "accuracy": 0.9688
+ },
+ "binary_q2_vs_odeh_AB": {
+  "tp": 1345,
+  "tn": 613,
+  "fp": 7,
+  "fn": 55,
+  "accuracy": 0.9693
+ },
+ "best_S_for_odeh_AB": [
+  8.6,
+  0.9772
+ ],
+ "best_S_for_odeh_A": [
+  11.7,
+  0.9802
+ ],
+ "best_S_for_any_optical": [
+  6.2,
+  0.9728
+ ],
+ "best_noon_for_odeh_AB": [
+  6.5,
+  0.9465
+ ],
+ "best_noon_for_any_optical": [
+  3.9,
+  0.9406
+ ],
+ "noon_elong_min_naked_eye": 3.71,
+ "noon_elong_max_invisible": 9.79,
+ "noon_elong_le_4_5_and_visible": 3,
+ "noon_elong_le_4_5_total": 464,
+ "noon_elong_le_10_and_naked_eye": 179,
+ "noon_elong_le_12_and_naked_eye": 262,
+ "lag_error_minutes": {
+  "mean": 0.74,
+  "std": 1.75
+ },
+ "arcv_error_vs_topocentric": {
+  "mean": 0.03,
+  "std": 0.84
+ },
+ "elong_minus_arcl": {
+  "mean": -0.53,
+  "std": 0.86
+ },
+ "parallax_lon_error_arcmin": {
+  "mean": -4.32,
+  "std": 4.38
+ },
+ "parallax_lat_error_arcmin": {
+  "mean": -5.71,
+  "std": 6.13
+ },
+ "latitude_error_deg": {
+  "mean": -0.002,
+  "std": 0.192
+ },
+ "calendar_odeh_AB": {
+  "months": 741,
+  "lengths": {
+   "30": 393,
+   "29": 348
+  },
+  "max_run_29": 3,
+  "max_run_30": 4
+ },
+ "calendar_majdi_ge1": {
+  "months": 741,
+  "lengths": {
+   "30": 393,
+   "29": 348
+  },
+  "max_run_29": 3,
+  "max_run_30": 4
+ },
+ "calendar_majdi_ge2": {
+  "months": 741,
+  "lengths": {
+   "29": 349,
+   "30": 392
+  },
+  "max_run_29": 2,
+  "max_run_30": 3
+ },
+ "night2_lag_hours": {
+  "n": 642,
+  "min": 1.02,
+  "max": 3.07,
+  "share_le_1h": 0.0,
+  "share_gt_2h": 0.416
+ },
+ "night3_lag_hours": {
+  "n": 16,
+  "min": 2.09,
+  "max": 2.95,
+  "share_le_1_5h": 0.0,
+  "share_gt_3h": 0.0
+ },
+ "examples": [
+  {
+   "conj": "2025-03-29 10:58",
+   "date": "2025-03-29",
+   "night": 0.0,
+   "age_h": 5.24,
+   "elong_noon": -0.615,
+   "lag_majdi": 3.13,
+   "lag_min_majdi": 12.5,
+   "arcv_majdi": 2.699,
+   "alt_majdi": 2.695,
+   "elong_majdi": 2.569,
+   "nur_majdi": 2.842,
+   "S": 2.634,
+   "beta_majdi": 1.357,
+   "beta_true": 1.003,
+   "lam_moon": 12.634,
+   "p_lon_majdi": 49.53,
+   "p_lat_majdi": 8.46,
+   "p_lon_true": 60.7,
+   "p_lat_true": 7.24,
+   "majdi_code": 0.0,
+   "majdi_desc": "غير ممكنة (البعد وقت الزوال ≤ دل)",
+   "majdi_q2": 0.0,
+   "lag_min": 9.4,
+   "arcl": 2.449,
+   "arcv_geo": 3.264,
+   "arcv_topo": 2.248,
+   "daz": 0.971,
+   "W": 0.015,
+   "q": -0.848,
+   "yallop": "F",
+   "V": -4.821,
+   "odeh": "D"
+  },
+  {
+   "conj": "2025-03-29 10:58",
+   "date": "2025-03-30",
+   "night": 1.0,
+   "age_h": 29.25,
+   "elong_noon": 13.527,
+   "lag_majdi": 19.843,
+   "lag_min_majdi": 79.4,
+   "arcv_majdi": 16.902,
+   "alt_majdi": 16.904,
+   "elong_majdi": 16.745,
+   "nur_majdi": 16.909,
+   "S": 16.824,
+   "beta_majdi": 2.569,
+   "beta_true": 2.324,
+   "lam_moon": 27.769,
+   "p_lon_majdi": 47.76,
+   "p_lat_majdi": 11.4,
+   "p_lon_true": 58.58,
+   "p_lat_true": 6.63,
+   "majdi_code": 3.0,
+   "majdi_desc": "يُرى بيّنًا (المكث والرؤية ≥ 12 والارتفاع ≥ 10)",
+   "majdi_q2": 1.0,
+   "lag_min": 79.7,
+   "arcl": 16.777,
+   "arcv_geo": 17.781,
+   "arcv_topo": 16.775,
+   "daz": 0.222,
+   "W": 0.711,
+   "q": 1.011,
+   "yallop": "A",
+   "V": 13.774,
+   "odeh": "A"
+  },
+  {
+   "conj": "2026-02-17 12:01",
+   "date": "2026-02-17",
+   "night": 0.0,
+   "age_h": 3.73,
+   "elong_noon": -1.064,
+   "lag_majdi": 1.338,
+   "lag_min_majdi": 5.4,
+   "arcv_majdi": 1.126,
+   "alt_majdi": 1.121,
+   "elong_majdi": 1.309,
+   "nur_majdi": 1.609,
+   "S": 1.218,
+   "beta_majdi": -0.743,
+   "beta_true": -1.033,
+   "lam_moon": 331.104,
+   "p_lon_majdi": 47.63,
+   "p_lat_majdi": 11.62,
+   "p_lon_true": 56.2,
+   "p_lat_true": 9.94,
+   "majdi_code": 0.0,
+   "majdi_desc": "غير ممكنة (البعد وقت الزوال ≤ دل)",
+   "majdi_q2": 0.0,
+   "lag_min": 2.6,
+   "arcl": 1.326,
+   "arcv_geo": 1.744,
+   "arcv_topo": 0.795,
+   "daz": -1.061,
+   "W": 0.004,
+   "q": -1.007,
+   "yallop": "F",
+   "V": -6.343,
+   "odeh": "D"
+  },
+  {
+   "conj": "2026-02-17 12:01",
+   "date": "2026-02-18",
+   "night": 1.0,
+   "age_h": 27.75,
+   "elong_noon": 11.2,
+   "lag_majdi": 15.859,
+   "lag_min_majdi": 63.4,
+   "arcv_majdi": 13.531,
+   "alt_majdi": 13.452,
+   "elong_majdi": 13.615,
+   "nur_majdi": 13.618,
+   "S": 13.573,
+   "beta_majdi": 0.421,
+   "beta_true": 0.185,
+   "lam_moon": 344.446,
+   "p_lon_majdi": 49.19,
+   "p_lat_majdi": 9.02,
+   "p_lon_true": 55.43,
+   "p_lat_true": 9.72,
+   "majdi_code": 3.0,
+   "majdi_desc": "يُرى بيّنًا (المكث والرؤية ≥ 12 والارتفاع ≥ 10)",
+   "majdi_q2": 1.0,
+   "lag_min": 63.2,
+   "arcl": 13.531,
+   "arcv_geo": 14.377,
+   "arcv_topo": 13.425,
+   "daz": -1.692,
+   "W": 0.437,
+   "q": 0.517,
+   "yallop": "A",
+   "V": 8.892,
+   "odeh": "A"
+  },
+  {
+   "conj": "2026-03-19 01:23",
+   "date": "2026-03-19",
+   "night": 0.0,
+   "age_h": 14.7,
+   "elong_noon": 4.626,
+   "lag_majdi": 8.861,
+   "lag_min_majdi": 35.4,
+   "arcv_majdi": 7.665,
+   "alt_majdi": 7.656,
+   "elong_majdi": 7.446,
+   "nur_majdi": 7.797,
+   "S": 7.555,
+   "beta_majdi": 2.444,
+   "beta_true": 2.178,
+   "lam_moon": 7.362,
+   "p_lon_majdi": 50.14,
+   "p_lat_majdi": 7.43,
+   "p_lon_true": 58.36,
+   "p_lat_true": 6.33,
+   "majdi_code": 1.0,
+   "majdi_desc": "جائزة قريبة من الخفاء (7 ≤ S < 10)",
+   "majdi_q2": 0.0,
+   "lag_min": 33.8,
+   "arcl": 7.545,
+   "arcv_geo": 8.367,
+   "arcv_topo": 7.387,
+   "daz": 1.537,
+   "W": 0.139,
+   "q": -0.26,
+   "yallop": "E",
+   "V": 1.09,
+   "odeh": "C"
+  },
+  {
+   "conj": "2026-03-19 01:23",
+   "date": "2026-03-20",
+   "night": 1.0,
+   "age_h": 38.71,
+   "elong_noon": 17.823,
+   "lag_majdi": 24.432,
+   "lag_min_majdi": 97.7,
+   "arcv_majdi": 20.978,
+   "alt_majdi": 20.954,
+   "elong_majdi": 20.733,
+   "nur_majdi": 20.979,
+   "S": 20.855,
+   "beta_majdi": 3.446,
+   "beta_true": 3.281,
+   "lam_moon": 21.616,
+   "p_lon_majdi": 48.48,
+   "p_lat_majdi": 10.2,
+   "p_lon_true": 55.78,
+   "p_lat_true": 5.44,
+   "majdi_code": 3.0,
+   "majdi_desc": "يُرى بيّنًا (المكث والرؤية ≥ 12 والارتفاع ≥ 10)",
+   "majdi_q2": 1.0,
+   "lag_min": 98.9,
+   "arcl": 20.976,
+   "arcv_geo": 21.927,
+   "arcv_topo": 20.955,
+   "daz": 0.927,
+   "W": 1.077,
+   "q": 1.618,
+   "yallop": "A",
+   "V": 19.88,
+   "odeh": "A"
+  }
+ ]
+}
