@@ -8,15 +8,15 @@
 
 | الملف | المحتوى |
 |---|---|
-| `study/ibn_al_majdi_study.pdf` | الدراسة كاملة (PDF، 42 صفحة تقريبًا) |
+| `study/ibn_al_majdi_study.pdf` | الدراسة كاملة (PDF، 62 صفحة، 35 شكلًا) |
 | `study/ibn_al_majdi_study.docx` | الدراسة بصيغة Word (معادلات Word أصلية قابلة للتحرير) |
 | `study/ibn_al_majdi_study.html` | الدراسة صفحة ويب مستقلة |
 | `study/study.md` | المصدر (Markdown + LaTeX) |
-| `figures/` | 11 شكلًا: الربع المجيب، المثلث الفلكي، هندسة الهلال، اختلاف المنظر، المعيار... |
+| `figures/` | 35 شكلًا: الفلك المملوكي، شيوخ ابن المجدي، الكرة السماوية، أعمال الربع، الظل والعصر والقبلة، المحفوظان، فلك القمر، اختلاف المنظر، الأقواس الخمسة، المعيار... |
 | `code/majdi.py` | أعمال الرسالة كلها دوالَّ برمجية، مع نص ابن المجدي على كل دالة |
 | `code/analysis.py` | حساب متغيرات الهلال لـ2020 أمسية في القاهرة ← `data/hilal_cairo.csv` |
 | `code/stats.py`، `code/lag_nights.py` | الإحصاءات ← `data/summary.json`، `data/lag_nights.json` |
-| `code/figures.py` | الرسومات |
+| `code/figures.py`، `code/concepts.py` | الرسوم البيانية ورسوم المفاهيم |
 | `source/` | النص المرقون للرسالة (نسخة 1237 هـ، إعداد د. نجلاء شمس) |
 
 ## أهم النتائج
@@ -36,7 +36,7 @@ pip install -r requirements.txt
 ```
 
 ```bash
-python3 code/analysis.py && python3 code/stats.py && python3 code/lag_nights.py && python3 code/figures.py
+python3 code/analysis.py && python3 code/stats.py && python3 code/lag_nights.py && python3 code/figures.py && python3 code/concepts.py
 ```
 
 ```bash

@@ -91,7 +91,7 @@ def fig_quadrant():
     ax.set_ylim(-18, 70)
     ax.set_aspect('equal')
     ax.axis('off')
-    ax.set_title(A('شكل (1): الربع المجيب — رسومه والعمل بالخيط والمري'), fontsize=15)
+    ax.set_title(A('الربع المجيب — رسومه والعمل بالخيط والمري'), fontsize=15)
     save(fig, 'fig01_quadrant.png')
 
 
@@ -138,7 +138,7 @@ def fig_triangle():
     ax.set_ylim(-1.5, 1.25)
     ax.set_aspect('equal')
     ax.axis('off')
-    ax.set_title(A('شكل (2): المثلث الفلكي وعناصر «فضل الدائر» و«السمت» في الرسالة'), fontsize=15)
+    ax.set_title(A('المثلث الفلكي وعناصر «فضل الدائر» و«السمت» في الرسالة'), fontsize=15)
     save(fig, 'fig02_triangle.png')
 
 
@@ -181,7 +181,7 @@ def fig_sunset_geometry():
     ax.set_xticks([]); ax.set_yticks([])
     for s in ax.spines.values():
         s.set_visible(False)
-    ax.set_title(A('شكل (3): متغيرات رؤية الهلال عند ابن المجدي لحظة غروب الشمس'), fontsize=15)
+    ax.set_title(A('متغيرات رؤية الهلال عند ابن المجدي لحظة غروب الشمس'), fontsize=15)
     save(fig, 'fig03_sunset_geometry.png')
 
 
@@ -214,7 +214,7 @@ def fig_ecliptic_angle():
         ax.set_title(A(title), fontsize=14)
         ax.set_xlim(-9, 3); ax.set_ylim(-3.2, 8)
         ax.set_aspect('equal'); ax.axis('off')
-    fig.suptitle(y=1.0, t=A('شكل (4): لماذا يكون اختلاف المنظر في الطول 51′ في الحمل و30′ في الميزان (عرض القاهرة 30°)'), fontsize=15)
+    fig.suptitle(y=1.0, t=A('لماذا يكون اختلاف المنظر في الطول 51′ في الحمل و30′ في الميزان (عرض القاهرة 30°)'), fontsize=15)
     save(fig, 'fig04_ecliptic_angle.png')
 
 
@@ -237,7 +237,7 @@ def fig_parallax_table(rows):
         ax.set_xticks(range(0, 361, 30))
         ax.grid(alpha=0.3)
         ax.legend(fontsize=11)
-    fig.suptitle(A('شكل (5): تحقيق قيم اختلاف المنظر في الرسالة على 1990–2049'), fontsize=15, y=1.04)
+    fig.suptitle(A('تحقيق قيم اختلاف المنظر في الرسالة على 1990–2049'), fontsize=15, y=1.04)
     save(fig, 'fig05_parallax_table.png')
 
 
@@ -254,7 +254,7 @@ def fig_alt_parallax():
     ax.set_ylabel(A('مقدار التعديل (دقائق قوس)'))
     ax.grid(alpha=0.3)
     ax.legend()
-    ax.set_title(A('شكل (6): «تُعدِّل بزيادة درجة على الارتفاع ... إلى ثلاثين، ثلاثة أرباع إلى ستين، وبتمام الزائد دقائق»'), fontsize=13)
+    ax.set_title(A('«تُعدِّل بزيادة درجة على الارتفاع ... إلى ثلاثين، ثلاثة أرباع إلى ستين، وبتمام الزائد دقائق»'), fontsize=13)
     save(fig, 'fig06_alt_parallax.png')
 
 
@@ -270,7 +270,7 @@ def fig_latitude(rows):
     err = bm - bt
     ax.text(-5.2, 4.6, A(f'متوسط الفرق {np.mean(err):+.2f}°، الانحراف المعياري {np.std(err):.2f}°'), fontsize=12)
     ax.grid(alpha=0.3)
-    ax.set_title(A('شكل (7): عرض القمر من «الحصة» (بعد القمر عن الجوزهر)'), fontsize=14)
+    ax.set_title(A('عرض القمر من «الحصة» (بعد القمر عن الجوزهر)'), fontsize=14)
     save(fig, 'fig07_latitude.png')
 
 
@@ -295,7 +295,7 @@ def fig_criterion(rows):
     ax.set_ylabel(A('قوس الرؤية ARCV (درجة)'))
     ax.grid(alpha=0.3)
     ax.legend(loc='lower right', fontsize=11)
-    ax.set_title(A('شكل (8): معيار المتأخرين عند ابن المجدي  S = ½(قوس الرؤية + البعد المطلق) — القاهرة 1990–2049'), fontsize=13)
+    ax.set_title(A('معيار المتأخرين عند ابن المجدي  S = ½(قوس الرؤية + البعد المطلق) — القاهرة 1990–2049'), fontsize=13)
     save(fig, 'fig08_criterion_plane.png')
 
 
@@ -312,7 +312,7 @@ def fig_noon(rows):
     ax.set_xlabel(A('فضل ما بين مقومي النيرين نصف النهار (درجة)'))
     ax.set_ylabel(A('عدد الأمسيات'))
     ax.legend()
-    ax.set_title(A('شكل (9): الشرط الأول في الرسالة — فضل المقومين وقت الزوال'), fontsize=14)
+    ax.set_title(A('الشرط الأول في الرسالة — فضل المقومين وقت الزوال'), fontsize=14)
     save(fig, 'fig09_noon_elongation.png')
 
 
@@ -340,7 +340,7 @@ def fig_flow():
         if i < n - 1:
             ax.annotate('', xy=(0.5, y - 0.046 - 0.02), xytext=(0.5, y - 0.04),
                         arrowprops=dict(arrowstyle='-|>', color=BLUE, lw=1.4))
-    ax.set_title(A('شكل (10): خوارزمية رؤية الهلال في «خلاصة الأقوال»'), fontsize=15)
+    ax.set_title(A('خوارزمية رؤية الهلال في «خلاصة الأقوال»'), fontsize=15)
     save(fig, 'fig10_flowchart.png')
 
 
@@ -362,7 +362,7 @@ def fig_lag_nights(rows):
     ax.set_xlabel(A('الماضي من الليل عند غروب الهلال (ساعة)'))
     ax.set_ylabel(A('عدد الشهور'))
     ax.legend(loc='center right')
-    ax.set_title(A('شكل (11): «يجوز أن يغرب الليلة الثانية من رؤيته والماضي لا يزيد على ساعة ...» — القاهرة 1990–2049'), fontsize=13)
+    ax.set_title(A('«يجوز أن يغرب الليلة الثانية من رؤيته والماضي لا يزيد على ساعة ...» — القاهرة 1990–2049'), fontsize=13)
     save(fig, 'fig11_lag_nights.png')
 
 
