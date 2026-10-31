@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>خريطة معيار ابن المجدي</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Noto+Naskh+Arabic:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+/* خريطة عالمية تتصدر الصفحة، وتحتها لوحة الموضع المختار؛ الألوان درجات الحكم الأربع */
+:root{
+  --bg:#f3f1ea; --panel:#fffdf7; --ink:#1d2433; --muted:#5f6675; --line:#d9d4c6; --accent:#1f4e79;
+  --ocean:#dfe7ee; --land:#f7f4ec; --coast:#4a5568;
+  --g-pre:#9aa3ad; --g0:#b4232c; --g1:#e8a33b; --g2:#8fc96b; --g3:#1f8a4c; --g-none:#e7e3d8;
+  --display:'Amiri','Noto Naskh Arabic',serif; --body:'Noto Naskh Arabic','Amiri','Segoe UI',sans-serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#12161f; --panel:#1a202c; --ink:#e8e6df; --muted:#a3a9b6; --line:#2d3546; --accent:#8cb8e6;
+  --ocean:#1b2533; --land:#262f3d; --coast:#9aa6b8; --g-none:#222a36; color-scheme:dark;}}
+:root[data-theme="dark"]{
+  --bg:#12161f; --panel:#1a202c; --ink:#e8e6df; --muted:#a3a9b6; --line:#2d3546; --accent:#8cb8e6;
+  --ocean:#1b2533; --land:#262f3d; --coast:#9aa6b8; --g-none:#222a36; color-scheme:dark;}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.6}
+.wrap{max-width:1280px;margin:0 auto;padding:16px;display:grid;gap:14px}
+header h1{font-family:var(--display);font-size:1.9rem;margin:0;text-wrap:balance}
+header p{margin:2px 0 0;color:var(--muted);font-size:.95rem}
+.bar{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px;display:flex;flex-wrap:wrap;gap:12px 20px;align-items:end}
+.field{display:grid;gap:3px}
+.field label{font-size:.82rem;color:var(--muted)}
+.row{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+input,select,button{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:5px 8px}
+input[type=number]{width:5.2em}
+button{cursor:pointer;background:var(--panel)}
+button:hover{border-color:var(--accent)}
+button.primary{background:var(--accent);color:var(--panel);border-color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.datehead{font-family:var(--display);font-size:1.35rem;display:flex;gap:18px;flex-wrap:wrap;align-items:baseline}
+.datehead small{font-family:var(--body);color:var(--muted);font-size:.85rem}
+.mapbox{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px;position:relative}
+canvas{width:100%;display:block;border-radius:6px;cursor:crosshair;touch-action:manipulation}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;margin-top:8px;font-size:.9rem}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.sw{width:16px;height:16px;border-radius:3px;display:inline-block;border:1px solid rgba(0,0,0,.15)}
+.tip{position:absolute;pointer-events:none;background:var(--ink);color:var(--panel);font-size:.82rem;padding:4px 8px;border-radius:6px;white-space:nowrap;display:none;z-index:2}
+.grid2{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:14px}
+@media (max-width:860px){.grid2{grid-template-columns:1fr}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px}
+.card h2{font-family:var(--display);font-size:1.3rem;margin:0 0 8px}
+.pill{display:inline-block;padding:3px 12px;border-radius:999px;font-weight:700;color:#fff}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;font-variant-numeric:tabular-nums}
+.kv dt{color:var(--muted)}
+.kv dd{margin:0;font-weight:600}
+.big{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:10px 0}
+.big div{border:1px solid var(--line);border-radius:8px;padding:8px;text-align:center}
+.big b{display:block;font-size:1.35rem;font-variant-numeric:tabular-nums}
+.big span{font-size:.8rem;color:var(--muted)}
+@media (max-width:420px){.big{grid-template-columns:1fr}}
+table{width:100%;border-collapse:collapse;font-size:.92rem;font-variant-numeric:tabular-nums}
+td,th{border-bottom:1px solid var(--line);padding:5px 6px;text-align:right;vertical-align:top}
+th{color:var(--muted);font-weight:600}
+.ok{color:var(--g3);font-weight:700}.no{color:var(--g0);font-weight:700}
+.note{font-size:.85rem;color:var(--muted)}
+.ltr{direction:ltr;unicode-bidi:isolate;display:inline-block}
+#status{font-size:.85rem;color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>خريطة معيار ابن المجدي لرؤية الهلال</h1>
+    <p>حكم «خلاصة الأقوال في معرفة الوقت ورؤية الهلال» (ت 850 هـ) محسوبًا بخطواته لكل موضع في العالم، مساءَ اليوم المختار.</p>
+  </header>
+
+  <section class="bar" aria-label="اختيار التاريخ والمدينة">
+    <div class="field">
+      <label for="gdate">التاريخ الميلادي (مساء اليوم)</label>
+      <div class="row">
+        <button id="prevDay" title="اليوم السابق">‹ السابق</button>
+        <input type="date" id="gdate" min="1900-01-02" max="2099-12-30">
+        <button id="nextDay" title="اليوم التالي">التالي ›</button>
+      </div>
+    </div>
+    <div class="field">
+      <label for="hday">التاريخ الهجري (تقويم أم القرى)</label>
+      <div class="row">
+        <input type="number" id="hday" min="1" max="30" aria-label="اليوم الهجري">
+        <select id="hmonth" aria-label="الشهر الهجري"></select>
+        <input type="number" id="hyear" min="1318" max="1520" aria-label="السنة الهجرية">
+        <button id="hgo">انتقل</button>
+      </div>
+    </div>
+    <div class="field">
+      <label>الاجتماع (المحاق)</label>
+      <div class="row">
+        <button id="prevConj">الاجتماع السابق</button>
+        <button id="nextConj">الاجتماع التالي</button>
+      </div>
+    </div>
+    <div class="field">
+      <label for="city">المدينة</label>
+      <select id="city"></select>
+    </div>
+  </section>
+
+  <div class="datehead" id="datehead"></div>
+
+  <section class="mapbox" aria-label="الخريطة">
+    <canvas id="map" width="1200" height="430" aria-label="خريطة العالم ملونة بدرجات معيار ابن المجدي"></canvas>
+    <div class="tip" id="tip"></div>
+    <div class="legend" id="legend"></div>
+    <div id="status"></div>
+  </section>
+
+  <section class="grid2">
+    <div class="card" id="cityCard"></div>
+    <div class="card" id="stepsCard"></div>
+  </section>
+
+  <section class="card">
+    <h2>عن الحساب</h2>
+    <p class="note">يأخذ البرنامج من الحساب الحديث (مكتبة Astronomy Engine) ما كان ابن المجدي يأخذه من التقويم فقط: مقوّمَي الشمس والقمر وقت الزوال في اليوم المختار واليوم الذي بعده. ثم ينفّذ خطوات الرسالة كما هي: الشرط الأول («دل» = <span class="ltr">4;30°</span>)، وحصة البعد ((نصف قوس النهار + 10°) ÷ 6)، واختلاف المنظر في الطول (51′ في الحمل إلى 30′ في الميزان) وفي العرض (6′ إلى 41′)، وعرض القمر (sin β = sin 5° sin الحصة)، ثم أقواس المكث والرؤية والارتفاع والبعد المطلق والنور، ثم الأقوال الثلاثة.</p>
+    <p class="note">قيم اختلاف المنظر في الرسالة مضبوطة على عرض القاهرة. وفي نصف الكرة الجنوبي عكسنا الجدول (الحمل مكان الميزان، والاختلاف في العرض نحو الشمال) لأن هيئة فلك البروج عند الغروب هناك معكوسة. وأوقات الغروب في لوحة المدينة محسوبة بالحساب الحديث مع الانكسار، والتاريخ الهجري المعروض بتقويم أم القرى، وهو تقويم حسابي قد يخالف الرؤية.</p>
+  </section>
+</div>
+
+<script>__LAND__</script>
+<script src="https://cdn.jsdelivr.net/npm/astronomy-engine@2.1.19/astronomy.browser.min.js"></script>
+<script>
+if (typeof Astronomy === 'undefined') {           // نسخة محلية عند العمل دون اتصال
+  document.write('<script src="astronomy.browser.min.js"><\/script>');
+}
+</script>
+<script>
+'use strict';
+// ---------------------------------------------------------------- ثوابت ومعينات
+const D2R = Math.PI / 180, EPS = 23 + 35 / 60, DAL = 4.5;
+const sind = x => Math.sin(x * D2R), cosd = x => Math.cos(x * D2R), tand = x => Math.tan(x * D2R);
+const clamp = x => Math.max(-1, Math.min(1, x));
+const asind = x => Math.asin(clamp(x)) / D2R, acosd = x => Math.acos(clamp(x)) / D2R;
+const atan2d = (y, x) => Math.atan2(y, x) / D2R;
+const n360 = x => ((x % 360) + 360) % 360, n180 = x => n360(x + 180) - 180;
+const LAT_MIN = -60, LAT_MAX = 66, STEP = 2;
+const HMONTHS = ['محرم','صفر','ربيع الأول','ربيع الآخر','جمادى الأولى','جمادى الآخرة','رجب','شعبان','رمضان','شوال','ذو القعدة','ذو الحجة'];
+const GRADES = {
+  pre: {c:'--g-pre', t:'قبل الاجتماع وقت الزوال'},
+  0:   {c:'--g0', t:'غير ممكنة'},
+  1:   {c:'--g1', t:'جائزة قريبة من الخفاء'},
+  2:   {c:'--g2', t:'جائزة قريبة إلى البيان'},
+  3:   {c:'--g3', t:'يُرى بيّنًا'},
+  none:{c:'--g-none', t:'لا تغرب الشمس'}
+};
+const CITIES = [
+  ['القاهرة',30.0444,31.2357,'Africa/Cairo'],['الإسكندرية',31.2001,29.9187,'Africa/Cairo'],['أسوان',24.0889,32.8998,'Africa/Cairo'],
+  ['مكة المكرمة',21.4225,39.8262,'Asia/Riyadh'],['المدينة المنورة',24.4672,39.6111,'Asia/Riyadh'],['الرياض',24.7136,46.6753,'Asia/Riyadh'],
+  ['القدس',31.7683,35.2137,'Asia/Jerusalem'],['عمّان',31.9539,35.9106,'Asia/Amman'],['دمشق',33.5138,36.2765,'Asia/Damascus'],
+  ['بيروت',33.8938,35.5018,'Asia/Beirut'],['بغداد',33.3152,44.3661,'Asia/Baghdad'],['الكويت',29.3759,47.9774,'Asia/Kuwait'],
+  ['الدوحة',25.2854,51.531,'Asia/Qatar'],['أبوظبي',24.4539,54.3773,'Asia/Dubai'],['مسقط',23.588,58.3829,'Asia/Muscat'],
+  ['صنعاء',15.3694,44.191,'Asia/Aden'],['الخرطوم',15.5007,32.5599,'Africa/Khartoum'],['طرابلس',32.8872,13.1913,'Africa/Tripoli'],
+  ['تونس',36.8065,10.1815,'Africa/Tunis'],['الجزائر',36.7538,3.0588,'Africa/Algiers'],['الرباط',34.0209,-6.8416,'Africa/Casablanca'],
+  ['نواكشوط',18.0735,-15.9582,'Africa/Nouakchott'],['داكار',14.7167,-17.4677,'Africa/Dakar'],['مقديشو',2.0469,45.3182,'Africa/Mogadishu'],
+  ['إسطنبول',41.0082,28.9784,'Europe/Istanbul'],['طهران',35.6892,51.389,'Asia/Tehran'],['كراتشي',24.8607,67.0011,'Asia/Karachi'],
+  ['دلهي',28.6139,77.209,'Asia/Kolkata'],['دكا',23.8103,90.4125,'Asia/Dhaka'],['كوالالمبور',3.139,101.6869,'Asia/Kuala_Lumpur'],
+  ['جاكرتا',-6.2088,106.8456,'Asia/Jakarta'],['لندن',51.5074,-0.1278,'Europe/London'],['باريس',48.8566,2.3522,'Europe/Paris'],
+  ['نيويورك',40.7128,-74.006,'America/New_York'],['لوس أنجلوس',34.0522,-118.2437,'America/Los_Angeles'],['ريو دي جانيرو',-22.9068,-43.1729,'America/Sao_Paulo'],
+  ['كيب تاون',-33.9249,18.4241,'Africa/Johannesburg'],['سيدني',-33.8688,151.2093,'Australia/Sydney']
+];
+
+// ---------------------------------------------------------------- خوارزمية ابن المجدي
+const decl = l => asind(sind(EPS) * sind(l));
+const ra = l => n360(atan2d(cosd(EPS) * sind(l), cosd(l)));
+function halfArc(phi, d) { const x = tand(phi) * tand(d); return Math.abs(x) > 1 ? null : 90 + asind(x); }
+function parallax(lam, phi) {            // جدول الرسالة؛ يُعكس في نصف الكرة الجنوبي
+  let d = Math.abs(n180(lam)); if (phi < 0) d = 180 - d;
+  const plon = 51 - 21 * d / 180, plat = 6 + 35 * d / 180;
+  return [plon, phi < 0 ? -plat : plat];
+}
+function noonUT(dateUTC, lon) { return new Date(dateUTC.getTime() - lon / 15 * 3600e3); }
+function meanNode(dt) { const T = (dt.getTime() - Date.UTC(2000, 0, 1, 12)) / 86400e3 / 36525; return n360(125.0445479 - 1934.1362891 * T); }
+function column(dateUTC, lon) {          // مقوّما النيرين وقت الزوال واليوم الذي بعده
+  const t1 = noonUT(dateUTC, lon), t2 = new Date(t1.getTime() + 86400e3);
+  const ls1 = Astronomy.SunPosition(t1).elon, lm1 = Astronomy.EclipticGeoMoon(t1).lon;
+  const ls2 = Astronomy.SunPosition(t2).elon, lm2 = Astronomy.EclipticGeoMoon(t2).lon;
+  return {ls1, lm1, bs: n360(ls2 - ls1), bm: n360(lm2 - lm1), node: meanNode(t1), elongNoon: n180(lm1 - ls1)};
+}
+function majdi(phi, c) {
+  const v = {elongNoon: c.elongNoon, bm: c.bm, bs: c.bs};
+  const hd0 = halfArc(phi, decl(c.ls1));
+  if (hd0 === null) { v.grade = 'none'; return v; }
+  v.hissa = (hd0 + 10) / 6;
+  const ls = c.ls1 + c.bs * v.hissa / 60, lm = c.lm1 + c.bm * v.hissa / 60;
+  const [plon, plat] = parallax(lm, phi);
+  const lmv = lm - plon / 60;
+  const beta = asind(sind(5) * sind(lm - c.node)), bv = beta - plat / 60;
+  const dm = asind(sind(bv) * cosd(EPS) + cosd(bv) * sind(EPS) * sind(lmv));
+  const am = n360(atan2d(sind(lmv) * cosd(EPS) - tand(bv) * sind(EPS), cosd(lmv)));
+  const ds = decl(ls), Hs = halfArc(phi, ds), Hm = halfArc(phi, dm);
+  if (Hs === null || Hm === null) { v.grade = 'none'; return v; }
+  const lag = n180((am + Hm) - (ra(ls) + Hs));
+  const arcv = -asind(sind(phi) * sind(ds) + cosd(phi) * cosd(ds) * cosd(Hs + lag));
+  const alt = asind(sind(phi) * sind(dm) + cosd(phi) * cosd(dm) * cosd(Hm - lag));
+  const elong = n180(lmv - ls), nur = acosd(cosd(elong) * cosd(bv)), S = (arcv + elong) / 2;
+  Object.assign(v, {ls, lm, plon, plat: Math.abs(plat), lmv, beta, bv, lag, arcv, alt, elong, nur, S, halfDay: Hs});
+  v.q1 = lag >= 12 && arcv >= 12 && alt >= 10;
+  v.q2 = lag >= 8 && alt >= 7 && nur >= 10;
+  if (c.elongNoon <= 0) v.grade = 'pre';
+  else if (c.elongNoon <= DAL || lag <= 0) v.grade = 0;
+  else if (v.q1 || S >= 13) v.grade = 3;
+  else if (S < 7) v.grade = 0;
+  else v.grade = S >= 10 ? 2 : 1;
+  return v;
+}
+
+// ---------------------------------------------------------------- التاريخ
+const state = {date: null, cols: [], grid: [], sel: {name: 'القاهرة', lat: 30.0444, lon: 31.2357, tz: 'Africa/Cairo'}};
+const $ = id => document.getElementById(id);
+const css = name => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+const isoOf = d => d.toISOString().slice(0, 10);
+function hijriParts(d) {
+  try {
+    const f = new Intl.DateTimeFormat('en-u-ca-islamic-umalqura-nu-latn', {timeZone: 'UTC', day: 'numeric', month: 'numeric', year: 'numeric'});
+    const p = {}; f.formatToParts(d).forEach(x => p[x.type] = x.value);
+    return {d: +p.day, m: +p.month, y: parseInt(p.year)};
+  } catch (e) { return null; }
+}
+function hijriToDate(y, m, d) {
+  const approx = Date.UTC(622, 6, 16, 12) + ((y - 1) * 354.36707 + (m - 1) * 29.530589 + (d - 1)) * 86400e3;
+  for (let k = -6; k <= 6; k++) {
+    const t = new Date(approx + k * 86400e3), h = hijriParts(t);
+    if (h && h.y === y && h.m === m && h.d === d) return t;
+  }
+  return null;
+}
+const fmtG = d => new Intl.DateTimeFormat('ar-EG', {timeZone: 'UTC', weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', numberingSystem: 'latn'}).format(d);
+function fmtTime(t, sel) {
+  if (!t) return '—';
+  if (sel.tz) return new Intl.DateTimeFormat('ar-EG', {timeZone: sel.tz, hour: '2-digit', minute: '2-digit', hour12: false, numberingSystem: 'latn'}).format(t);
+  const lm = new Date(t.getTime() + sel.lon / 15 * 3600e3);
+  return lm.toISOString().slice(11, 16) + ' (توقيت محلي وسطي)';
+}
+const fmtDeg = (x, n = 2) => (x === undefined || x === null || isNaN(x)) ? '—' : `${x.toFixed(n)}°`;
+function dms(x) { const s = x < 0 ? '−' : ''; x = Math.abs(x); let d = Math.floor(x), m = Math.round((x - d) * 60); if (m === 60) { d++; m = 0; } return `${s}${d};${String(m).padStart(2, '0')}`; }
+
+function setDate(d) {
+  state.date = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate(), 12));
+  $('gdate').value = isoOf(state.date);
+  const h = hijriParts(state.date);
+  if (h) { $('hday').value = h.d; $('hmonth').value = h.m; $('hyear').value = h.y; }
+  $('datehead').innerHTML = `<span>${fmtG(state.date)}</span>` +
+    (h ? `<span>${h.d} ${HMONTHS[h.m - 1]} ${h.y} هـ</span>` : '') +
+    `<small>${conjText()}</small>`;
+  compute();
+}
+function conjAround(d) {
+  const prev = Astronomy.SearchMoonPhase(0, new Date(d.getTime() - 30 * 86400e3), 31);
+  let p = prev; while (true) { const n = Astronomy.SearchMoonPhase(0, new Date(p.date.getTime() + 86400e3), 31); if (n.date > d) return {prev: p.date, next: n.date}; p = n; }
+}
+function conjText() {
+  const evening = new Date(state.date.getTime() + 6 * 3600e3);
+  const c = conjAround(evening);
+  const f = new Intl.DateTimeFormat('ar-EG', {timeZone: 'UTC', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit', hour12: false, numberingSystem: 'latn'});
+  const age = (evening - c.prev) / 3600e3;
+  return `آخر اجتماع: ${f.format(c.prev)} بتوقيت غرينتش (عمر القمر مساءً نحو ${age.toFixed(0)} ساعة) · الاجتماع التالي: ${f.format(c.next)}`;
+}
+
+// ---------------------------------------------------------------- الخريطة
+function compute() {
+  $('status').textContent = 'جارٍ الحساب…';
+  state.cols = []; state.grid = [];
+  for (let lon = -180 + STEP / 2; lon < 180; lon += STEP) {
+    const c = column(state.date, lon); state.cols.push(c);
+    const colv = [];
+    for (let lat = LAT_MIN + STEP / 2; lat < LAT_MAX; lat += STEP) colv.push(majdi(lat, c));
+    state.grid.push(colv);
+  }
+  draw(); renderCity();
+  const counts = {}; state.grid.flat().forEach(v => counts[v.grade] = (counts[v.grade] || 0) + 1);
+  $('status').textContent = '';
+  renderLegend(counts);
+}
+function proj(lon, lat, W, H) { return [(lon + 180) / 360 * W, (LAT_MAX - lat) / (LAT_MAX - LAT_MIN) * H]; }
+function draw() {
+  const cv = $('map'), dpr = window.devicePixelRatio || 1, W = cv.clientWidth, H = Math.round(W * (LAT_MAX - LAT_MIN) / 360);
+  cv.width = W * dpr; cv.height = H * dpr; cv.style.height = H + 'px';
+  const g = cv.getContext('2d'); g.setTransform(dpr, 0, 0, dpr, 0, 0);
+  g.fillStyle = css('--ocean'); g.fillRect(0, 0, W, H);
+  const landPath = new Path2D();
+  for (const p of LAND) {                 // يُقطع الخط عند عبور خط التاريخ الدولي
+    for (let i = 0; i < p.length; i += 2) {
+      const [x, y] = proj(p[i], p[i + 1], W, H);
+      (i && Math.abs(p[i] - p[i - 2]) < 180) ? landPath.lineTo(x, y) : landPath.moveTo(x, y);
+    }
+  }
+  g.fillStyle = css('--land'); g.fill(landPath);
+  const cw = W / state.grid.length, ch = H / state.grid[0].length;
+  g.globalAlpha = 0.78;
+  state.grid.forEach((col, i) => col.forEach((v, j) => {
+    if (v.grade === 'none') return;
+    g.fillStyle = css(GRADES[v.grade].c);
+    g.fillRect(i * cw, H - (j + 1) * ch, cw + 0.6, ch + 0.6);
+  }));
+  g.globalAlpha = 1;
+  g.strokeStyle = css('--coast'); g.lineWidth = 0.8; g.stroke(landPath);
+  g.strokeStyle = 'rgba(127,127,127,.35)'; g.lineWidth = 0.6; g.setLineDash([3, 4]);
+  for (let lo = -150; lo <= 150; lo += 30) { const [x] = proj(lo, 0, W, H); g.beginPath(); g.moveTo(x, 0); g.lineTo(x, H); g.stroke(); }
+  for (let la = -60; la <= 60; la += 30) { const [, y] = proj(0, la, W, H); g.beginPath(); g.moveTo(0, y); g.lineTo(W, y); g.stroke(); }
+  g.setLineDash([]);
+  g.fillStyle = css('--ink');
+  for (const c of CITIES) { const [x, y] = proj(c[2], c[1], W, H); g.beginPath(); g.arc(x, y, 2, 0, 7); g.fill(); }
+  const s = state.sel, [sx, sy] = proj(s.lon, s.lat, W, H);
+  g.lineWidth = 2.5; g.strokeStyle = css('--panel'); g.beginPath(); g.arc(sx, sy, 7, 0, 7); g.stroke();
+  g.lineWidth = 1.5; g.strokeStyle = css('--ink'); g.beginPath(); g.arc(sx, sy, 7, 0, 7); g.stroke();
+  g.font = `600 13px ${css('--body')}`; g.textAlign = 'center'; g.fillStyle = css('--ink');
+  g.fillText(s.name, sx, sy - 11);
+}
+function renderLegend(counts) {
+  const total = Object.values(counts).reduce((a, b) => a + b, 0);
+  $('legend').innerHTML = ['3', '2', '1', '0', 'pre', 'none'].map(k =>
+    `<span><i class="sw" style="background:var(${GRADES[k].c})"></i>${GRADES[k].t}${counts[k] ? ` <small class="note">(${Math.round(100 * counts[k] / total)}٪)</small>` : ''}</span>`).join('');
+}
+function cellAt(ev) {
+  const cv = $('map'), r = cv.getBoundingClientRect();
+  const lon = (ev.clientX - r.left) / r.width * 360 - 180, lat = LAT_MAX - (ev.clientY - r.top) / r.height * (LAT_MAX - LAT_MIN);
+  return {lon, lat, x: ev.clientX - r.left, y: ev.clientY - r.top};
+}
+$('map').addEventListener('mousemove', ev => {
+  const p = cellAt(ev), i = Math.floor((p.lon + 180) / STEP), j = Math.floor((p.lat - LAT_MIN) / STEP);
+  const v = state.grid[i] && state.grid[i][j]; const tip = $('tip');
+  if (!v) { tip.style.display = 'none'; return; }
+  tip.textContent = `${p.lat.toFixed(1)}°، ${p.lon.toFixed(1)}° — ${GRADES[v.grade].t}` + (v.S !== undefined ? ` (S = ${v.S.toFixed(1)}°)` : '');
+  tip.style.display = 'block'; tip.style.left = Math.min(p.x + 14, $('map').clientWidth - tip.offsetWidth) + 'px'; tip.style.top = (p.y + 14) + 'px';
+});
+$('map').addEventListener('mouseleave', () => $('tip').style.display = 'none');
+$('map').addEventListener('click', ev => {
+  const p = cellAt(ev);
+  state.sel = {name: `${p.lat.toFixed(2)}°، ${p.lon.toFixed(2)}°`, lat: p.lat, lon: p.lon, tz: null};
+  $('city').value = ''; draw(); renderCity();
+});
+
+// ---------------------------------------------------------------- لوحة الموضع
+function renderCity() {
+  const s = state.sel, c = column(state.date, s.lon), v = majdi(s.lat, c);
+  const obs = new Astronomy.Observer(s.lat, s.lon, 0), t0 = noonUT(state.date, s.lon);
+  let ss = null, ms = null;
+  try { ss = Astronomy.SearchRiseSet('Sun', obs, -1, t0, 1); ms = Astronomy.SearchRiseSet('Moon', obs, -1, t0, 1); } catch (e) {}
+  const lagMin = ss && ms ? (ms.date - ss.date) / 60e3 : null;
+  const g = GRADES[v.grade];
+  $('cityCard').innerHTML = `
+    <h2>${s.name}</h2>
+    <p class="note">العرض ${s.lat.toFixed(2)}°، الطول ${s.lon.toFixed(2)}°${s.tz ? ' — الأوقات بالتوقيت المحلي' : ''}</p>
+    <p><span class="pill" style="background:var(${g.c})">${g.t}</span></p>
+    <div class="big">
+      <div><b>${fmtTime(ss && ss.date, s)}</b><span>غروب الشمس</span></div>
+      <div><b>${fmtTime(ms && ms.date, s)}</b><span>غروب القمر</span></div>
+      <div><b class="ltr">${lagMin === null ? '—' : (lagMin >= 0 ? '+' : '−') + Math.abs(lagMin).toFixed(0) + ' د'}</b><span>المكث (القمر بعد الشمس)</span></div>
+    </div>
+    <dl class="kv">
+      <dt>فضل ما بين مقوّمي النيرين وقت الزوال</dt><dd><span class="ltr">${dms(c.elongNoon)}</span> (${c.elongNoon.toFixed(2)}°) — ${c.elongNoon <= 0 ? '<span class="no">الشمس متقدمة: لم يقع الاجتماع</span>' : c.elongNoon <= DAL ? '<span class="no">دل فأقل: غير ممكنة</span>' : '<span class="ok">أكثر من دل: ممكنة</span>'}</dd>
+      <dt>مقوّم الشمس وقت الزوال</dt><dd>${fmtDeg(c.ls1)}</dd>
+      <dt>مقوّم القمر وقت الزوال</dt><dd>${fmtDeg(c.lm1)}</dd>
+      <dt>بهت القمر / بهت الشمس</dt><dd>${fmtDeg(c.bm)} / ${fmtDeg(c.bs)}</dd>
+    </dl>`;
+  if (v.grade === 'none') { $('stepsCard').innerHTML = '<h2>خطوات ابن المجدي</h2><p>لا تغرب الشمس أو القمر في هذا العرض في هذا اليوم.</p>'; return; }
+  const yes = b => b ? '<span class="ok">متحقق</span>' : '<span class="no">غير متحقق</span>';
+  const sDesc = v.S < 7 ? 'لا تجوز رؤيته' : v.S < 10 ? 'جائزة قريبة من الخفاء' : v.S < 13 ? 'جائزة قريبة إلى البيان' : 'رُئي بيّنًا';
+  $('stepsCard').innerHTML = `
+    <h2>خطوات ابن المجدي</h2>
+    <table>
+      <tr><th>الخطوة</th><th>القيمة</th></tr>
+      <tr><td>حصة البعد = (نصف قوس النهار + 10) ÷ 6</td><td class="ltr">${dms(v.hissa)}</td></tr>
+      <tr><td>مقوّم الهلال عند الرؤية</td><td>${fmtDeg(v.lm)}</td></tr>
+      <tr><td>اختلاف الطول / اختلاف العرض</td><td>${v.plon.toFixed(0)}′ / ${v.plat.toFixed(0)}′</td></tr>
+      <tr><td>عرض القمر (من الحصة) / المرئي</td><td>${fmtDeg(v.beta)} / ${fmtDeg(v.bv)}</td></tr>
+      <tr><td>قوس المكث</td><td>${fmtDeg(v.lag)} = ${(v.lag * 4).toFixed(0)} دقيقة</td></tr>
+      <tr><td>قوس الرؤية (انحطاط الشمس عند غروب الهلال)</td><td>${fmtDeg(v.arcv)}</td></tr>
+      <tr><td>قوس الارتفاع (ارتفاع الهلال عند الغروب)</td><td>${fmtDeg(v.alt)}</td></tr>
+      <tr><td>البعد المطلق</td><td>${fmtDeg(v.elong)}</td></tr>
+      <tr><td>قوس النور</td><td>${fmtDeg(v.nur)}</td></tr>
+    </table>
+    <table style="margin-top:10px">
+      <tr><th>القول</th><th>الشرط</th><th>الحكم</th></tr>
+      <tr><td>الأول</td><td>المكث ≥ 12، الرؤية ≥ 12، الارتفاع ≥ 10</td><td>${yes(v.q1)}</td></tr>
+      <tr><td>الثاني</td><td>المكث ≥ 8، الارتفاع ≥ 7، النور ≥ 10</td><td>${yes(v.q2)}</td></tr>
+      <tr><td>المتأخرون</td><td>S = ½(الرؤية + البعد) = ${v.S.toFixed(2)}°</td><td>${sDesc}</td></tr>
+    </table>`;
+}
+
+// ---------------------------------------------------------------- الأحداث والبدء
+function init() {
+  HMONTHS.forEach((m, i) => $('hmonth').insertAdjacentHTML('beforeend', `<option value="${i + 1}">${m}</option>`));
+  $('city').insertAdjacentHTML('beforeend', '<option value="">— موضع من الخريطة —</option>');
+  CITIES.forEach((c, i) => $('city').insertAdjacentHTML('beforeend', `<option value="${i}">${c[0]}</option>`));
+  $('city').value = '0';
+  $('city').addEventListener('change', () => {
+    if ($('city').value === '') return;
+    const c = CITIES[+$('city').value]; state.sel = {name: c[0], lat: c[1], lon: c[2], tz: c[3]}; draw(); renderCity();
+  });
+  $('gdate').addEventListener('change', () => { const v = $('gdate').value; if (v) setDate(new Date(v + 'T12:00:00Z')); });
+  $('prevDay').addEventListener('click', () => setDate(new Date(state.date.getTime() - 86400e3)));
+  $('nextDay').addEventListener('click', () => setDate(new Date(state.date.getTime() + 86400e3)));
+  $('hgo').addEventListener('click', () => {
+    const t = hijriToDate(+$('hyear').value, +$('hmonth').value, +$('hday').value);
+    if (t) setDate(t); else $('status').textContent = 'لم يُعثر على هذا التاريخ الهجري في تقويم أم القرى؛ تحقّق من اليوم (29 أو 30).';
+  });
+  const jump = dir => {
+    const c = conjAround(new Date(state.date.getTime() + 6 * 3600e3));
+    const t = dir < 0 ? c.prev : c.next;
+    setDate(new Date(Date.UTC(t.getUTCFullYear(), t.getUTCMonth(), t.getUTCDate(), 12)));
+  };
+  $('prevConj').addEventListener('click', () => jump(-1));
+  $('nextConj').addEventListener('click', () => jump(1));
+  let rt; window.addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(draw, 150); });
+  matchMedia('(prefers-color-scheme: dark)').addEventListener('change', draw);
+  new MutationObserver(draw).observe(document.documentElement, {attributes: true, attributeFilter: ['data-theme']});
+  // البدء: مساء اليوم التالي لآخر اجتماع، حيث يمر حدّ الرؤية عادةً بالعالم الإسلامي
+  const now = new Date();
+  const c = conjAround(now);
+  setDate(new Date(Date.UTC(c.prev.getUTCFullYear(), c.prev.getUTCMonth(), c.prev.getUTCDate() + 1, 12)));
+}
+if (typeof Astronomy === 'undefined') {
+  window.addEventListener('load', () => typeof Astronomy === 'undefined'
+    ? ($('status').textContent = 'تعذّر تحميل مكتبة الحساب الفلكي. تأكّد من الاتصال بالإنترنت ثم أعد فتح الصفحة.')
+    : init());
+} else init();
+</script>
+</body>
+</html>
