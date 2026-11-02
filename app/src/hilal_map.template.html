@@ -64,6 +64,12 @@ th{color:var(--muted);font-weight:600}
 .note{font-size:.85rem;color:var(--muted)}
 .ltr{direction:ltr;unicode-bidi:isolate;display:inline-block}
 #status{font-size:.85rem;color:var(--muted)}
+.viz{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.viz figure{margin:0;display:grid;gap:6px;align-content:start}
+.viz figure.wide{grid-column:1/-1}
+.viz figcaption{font-size:.88rem;color:var(--muted)}
+.viz svg{width:100%;height:auto;display:block;border:1px solid var(--line);border-radius:8px;background:var(--panel)}
+@media (max-width:860px){.viz{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -117,6 +123,8 @@ th{color:var(--muted);font-weight:600}
     <div class="card" id="cityCard"></div>
     <div class="card" id="stepsCard"></div>
   </section>
+
+  <section class="card" id="vizCard" aria-label="رسم القيم"></section>
 
   <section class="card">
     <h2>عن الحساب</h2>
@@ -202,6 +210,10 @@ function majdi(phi, c) {
   const alt = asind(sind(phi) * sind(dm) + cosd(phi) * cosd(dm) * cosd(Hm - lag));
   const elong = n180(lmv - ls), nur = acosd(cosd(elong) * cosd(bv)), S = (arcv + elong) / 2;
   Object.assign(v, {ls, lm, plon, plat: Math.abs(plat), lmv, beta, bv, lag, arcv, alt, elong, nur, S, halfDay: Hs});
+  if (typeof azim === 'function') {      // السمت للرسم: الشمس عند غروبها وعند غروب الهلال، والهلال عند الغروب وعند غروبه
+    v.azS = azim(phi, ds, Hs); v.azS2 = azim(phi, ds, Hs + lag); v.azM = azim(phi, dm, Hm - lag); v.azMset = azim(phi, dm, Hm);
+    v.daz = n180(v.azM - v.azS); v.ampM = asind(sind(dm) / cosd(phi));
+  }
   v.q1 = lag >= 12 && arcv >= 12 && alt >= 10;
   v.q2 = lag >= 8 && alt >= 7 && nur >= 10;
   if (c.elongNoon <= 0) v.grade = 'pre';
@@ -361,6 +373,7 @@ function renderCity() {
       <dt>مقوّم القمر وقت الزوال</dt><dd>${fmtDeg(c.lm1)}</dd>
       <dt>بهت القمر / بهت الشمس</dt><dd>${fmtDeg(c.bm)} / ${fmtDeg(c.bs)}</dd>
     </dl>`;
+  renderViz(v, c, lagMin, s);
   if (v.grade === 'none') { $('stepsCard').innerHTML = '<h2>خطوات ابن المجدي</h2><p>لا تغرب الشمس أو القمر في هذا العرض في هذا اليوم.</p>'; return; }
   const yes = b => b ? '<span class="ok">متحقق</span>' : '<span class="no">غير متحقق</span>';
   const sDesc = v.S < 7 ? 'لا تجوز رؤيته' : v.S < 10 ? 'جائزة قريبة من الخفاء' : v.S < 13 ? 'جائزة قريبة إلى البيان' : 'رُئي بيّنًا';
@@ -384,6 +397,139 @@ function renderCity() {
       <tr><td>الثاني</td><td>المكث ≥ 8، الارتفاع ≥ 7، النور ≥ 10</td><td>${yes(v.q2)}</td></tr>
       <tr><td>المتأخرون</td><td>S = ½(الرؤية + البعد) = ${v.S.toFixed(2)}°</td><td>${sDesc}</td></tr>
     </table>`;
+}
+
+// ---------------------------------------------------------------- رسم القيم للموضع المختار
+const azim = (phi, d, t) => atan2d(sind(t), cosd(t) * sind(phi) - tand(d) * cosd(phi)); // من الجنوب نحو الغرب
+function svgEl(w, h, body) {
+  return `<svg viewBox="0 0 ${w} ${h}" role="img" xmlns="http://www.w3.org/2000/svg" font-family="${css('--body').replace(/"/g, "'")}" direction="rtl">
+  <defs>${['ink', 'g0', 'g3', 'accent', 'g1', 'muted'].map(k => `<marker id="ar-${k}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0L10,5L0,10z" fill="var(--${k === 'ink' || k === 'accent' || k === 'muted' ? k : k.replace('g', 'g')})"/></marker>`).join('')}</defs>${body}</svg>`;
+}
+const T = (x, y, s, o = {}) => `<text x="${x.toFixed(1)}" y="${y.toFixed(1)}" text-anchor="${o.a || 'middle'}" font-size="${o.fs || 13}" fill="var(--${o.c || 'ink'})" font-weight="${o.w || 400}"${o.rot ? ` transform="rotate(${o.rot} ${x.toFixed(1)} ${y.toFixed(1)})"` : ''}>${s}</text>`;
+const L = (x1, y1, x2, y2, c, o = {}) => `<line x1="${x1.toFixed(1)}" y1="${y1.toFixed(1)}" x2="${x2.toFixed(1)}" y2="${y2.toFixed(1)}" stroke="var(--${c})" stroke-width="${o.w || 1.6}"${o.dash ? ` stroke-dasharray="${o.dash}"` : ''}${o.arrow ? ` marker-end="url(#ar-${c})"${o.arrow === 2 ? ` marker-start="url(#ar-${c})"` : ''}` : ''}/>`;
+
+// 1) السماء الغربية لحظة الغروب
+function skySVG(v, phi) {
+  const xs0 = v.azS - 90, xm0 = v.azM - 90, xs1 = v.azS2 - 90, xm1 = v.azMset - 90;
+  const xmin = Math.min(xs0, xm0, xs1, xm1) - 6, xmax = Math.max(xs0, xm0, xs1, xm1) + 6;
+  const ymin = Math.min(-v.arcv - 4, -3 - 70 / 12), ymax = Math.max(v.alt, 3) + 5;
+  const W = 640, sc = Math.min(W / (xmax - xmin), 420 / (ymax - ymin)), H = (ymax - ymin) * sc + 30;
+  const px = x => (x - xmin) * sc + (W - (xmax - xmin) * sc) / 2, py = y => (ymax - y) * sc + 10;
+  const hz = py(0);
+  let b = `<rect x="0" y="0" width="${W}" height="${hz}" fill="var(--ocean)"/><rect x="0" y="${hz}" width="${W}" height="${H - hz}" fill="var(--line)"/>`;
+  b += L(0, hz, W, hz, 'g3', {w: 2.5}) + T(W - 8, hz - 6, 'الأفق الغربي', {a: 'start', c: 'g3', fs: 12});
+  b += T(px(0), H - 6, 'المغرب', {c: 'muted', fs: 12}) + T(W - 8, H - 6, 'الشمال →', {a: 'start', c: 'muted', fs: 12}) + T(8, H - 6, '← الجنوب', {a: 'end', c: 'muted', fs: 12});
+  b += L(px(0), hz - 4, px(0), hz + 4, 'muted');
+  // مسارا النيرين
+  b += L(px(xs0), py(0), px(xs1), py(-v.arcv), 'g1', {dash: '4 4', w: 1.2});
+  b += L(px(xm0), py(v.alt), px(xm1), py(0), 'muted', {dash: '4 4', w: 1.2});
+  // قوس الارتفاع
+  const away = px(xm0) <= px(xs0) ? -1 : 1;          // يُرسم سهم الارتفاع في الجهة البعيدة عن الشمس
+  const xa = px(xm0) + away * 24;
+  b += L(xa, hz, xa, py(v.alt), 'accent', {arrow: 2});
+  b += T(xa + away * 6, (hz + py(v.alt)) / 2 + 4, `قوس الارتفاع ${v.alt.toFixed(1)}°`, {a: away < 0 ? 'start' : 'end', c: 'accent', w: 600});
+  // قوس الرؤية
+  const xv = px(xs1) - 22;
+  b += L(xv, hz, xv, py(-v.arcv), 'g0', {arrow: 2});
+  b += T(xv - 6, (hz + py(-v.arcv)) / 2, `قوس الرؤية ${v.arcv.toFixed(1)}°`, {a: 'start', c: 'g0', w: 600});
+  // قوس النور
+  b += L(px(xs0), py(0), px(xm0), py(v.alt), 'g3', {w: 2});
+  const mx = px(xs0) + 0.62 * (px(xm0) - px(xs0)), my = py(0) + 0.62 * (py(v.alt) - py(0));
+  b += T(mx - away * 8, my - 10, `قوس النور ${v.nur.toFixed(1)}°`, {a: away < 0 ? 'end' : 'start', c: 'g3', w: 600});
+  // فرق السمت
+  const yd = hz + 18;
+  b += L(px(xs0), yd, px(xm0), yd, 'ink', {arrow: 2, w: 1.2});
+  b += T((px(xs0) + px(xm0)) / 2, yd + 16, `فرق السمت ${Math.abs(v.daz).toFixed(1)}°`, {fs: 12});
+  // الأجرام
+  b += `<circle cx="${px(xs0)}" cy="${hz}" r="9" fill="#f5a524"/>` + T(px(xs0), hz - 13, 'الشمس عند غروبها', {fs: 11});
+  b += `<circle cx="${px(xs1)}" cy="${py(-v.arcv)}" r="8" fill="#f5a524" opacity=".55"/>` + T(px(xs1), py(-v.arcv) + 22, 'الشمس عند غروب الهلال', {fs: 11});
+  b += `<circle cx="${px(xm0)}" cy="${py(v.alt)}" r="8" fill="#64748b"/><path d="M${px(xm0) + 2},${py(v.alt) - 8} a8,8 0 0,0 0,16 a5,8 0 0,1 0,-16z" fill="#fde68a" transform="rotate(${-Math.atan2(py(v.alt) - hz, px(xm0) - px(xs0)) * 180 / Math.PI} ${px(xm0)} ${py(v.alt)})"/>`;
+  b += T(px(xm0), py(v.alt) - 13, 'الهلال', {fs: 12, w: 700});
+  b += `<circle cx="${px(xm1)}" cy="${hz}" r="4" fill="none" stroke="var(--muted)"/>` + T(px(xm1), hz + 58, `موضع غروب الهلال (سعة مغربه ${v.ampM.toFixed(1)}°)`, {fs: 11, c: 'muted'});
+  return svgEl(W, H, b);
+}
+
+// 2) فلك البروج: البعد وقت الزوال والبعد المطلق والعرض
+function eclSVG(v, c) {
+  const W = 640, H = 230;
+  const pts = [0, v.ls - c.ls1, c.elongNoon, v.lm - c.ls1, v.lmv - c.ls1, DAL];
+  const lo = Math.min(...pts) - 2, hi = Math.max(...pts) + 2;
+  const px = x => W - 30 - (x - lo) / (hi - lo) * (W - 60);       // الطول يزداد نحو اليسار
+  const yE = 120, bs = 9;                                           // 9 بكسل لكل درجة عرض
+  const py = b => yE - b * bs;
+  let s = `<rect x="${Math.min(px(0), px(DAL))}" y="${yE - 50}" width="${Math.abs(px(DAL) - px(0))}" height="100" fill="var(--g0)" opacity=".12"/>`;
+  s += T((px(0) + px(DAL)) / 2, yE + 64, 'منطقة «دل»', {c: 'g0', fs: 11});
+  s += L(20, yE, W - 20, yE, 'g1', {w: 2}) + T(W - 22, yE - 6, 'فلك البروج', {a: 'start', c: 'g1', fs: 12});
+  s += L(60, 18, 20, 18, 'muted', {arrow: 1, w: 1}) + T(66, 22, 'توالي البروج', {a: 'end', c: 'muted', fs: 11});
+  // وقت الزوال
+  s += `<circle cx="${px(0)}" cy="${yE}" r="7" fill="#f5a524"/>` + T(px(0), yE + 22, 'الشمس (الزوال)', {fs: 11});
+  s += `<circle cx="${px(c.elongNoon)}" cy="${yE}" r="5" fill="none" stroke="var(--muted)" stroke-width="1.5"/>` + T(px(c.elongNoon), yE - 12, 'القمر (الزوال)', {fs: 11, c: 'muted'});
+  s += L(px(0), 42, px(c.elongNoon), 42, 'ink', {arrow: 2, w: 1.2}) + T((px(0) + px(c.elongNoon)) / 2, 36, `البعد وقت الزوال ${c.elongNoon.toFixed(2)}° ${c.elongNoon > DAL ? '> دل' : '≤ دل'}`, {fs: 12, w: 600, c: c.elongNoon > DAL ? 'g3' : 'g0'});
+  // وقت الرؤية
+  s += `<circle cx="${px(v.ls - c.ls1)}" cy="${yE}" r="7" fill="#f5a524" opacity=".6"/>`;
+  s += `<circle cx="${px(v.lm - c.ls1)}" cy="${py(v.beta)}" r="5" fill="none" stroke="var(--accent)" stroke-dasharray="2 2"/>`;
+  s += L(px(v.lm - c.ls1), py(v.beta), px(v.lmv - c.ls1), py(v.bv), 'accent', {arrow: 1, w: 1.2});
+  s += `<circle cx="${px(v.lmv - c.ls1)}" cy="${py(v.bv)}" r="6" fill="#64748b"/>` + T(px(v.lmv - c.ls1), py(v.bv) + (v.bv >= 0 ? -12 : 20), 'الهلال المرئي', {fs: 11, w: 600});
+  s += L(px(v.lmv - c.ls1), yE, px(v.lmv - c.ls1), py(v.bv), 'g3', {arrow: 1, w: 1.4, dash: '3 2'});
+  s += T(px(v.lmv - c.ls1) - 6, (yE + py(v.bv)) / 2 + 4, `العرض المرئي ${v.bv.toFixed(2)}°`, {a: 'end', fs: 11, c: 'g3'});
+  s += L(px(v.ls - c.ls1), yE + 36, px(v.lmv - c.ls1), yE + 36, 'accent', {arrow: 2, w: 1.2});
+  s += T((px(v.ls - c.ls1) + px(v.lmv - c.ls1)) / 2, yE + 52, `البعد المطلق ${v.elong.toFixed(2)}° (بعد اختلاف المنظر ${v.plon.toFixed(0)}′)`, {fs: 12, w: 600, c: 'accent'});
+  return svgEl(W, H, s);
+}
+
+// 3) شريط الزمن بعد الغروب
+function timeSVG(v, lagMin) {
+  const W = 640, H = 120, maj = v.lag * 4, mx = Math.max(maj, lagMin || 0, 40) + 20;
+  const px = m => W - 30 - m / mx * (W - 60), y = 60;
+  let s = L(px(0), y, px(mx), y, 'line', {w: 10});
+  if (maj > 0) s += L(px(0), y, px(maj), y, 'accent', {w: 10});
+  s += L(px(40), y - 16, px(40), y + 16, 'g1', {w: 2, dash: '3 2'}) + T(px(40), y - 22, 'وقت التحري (+40 د)', {fs: 11, c: 'g1'});
+  s += T(px(0), y + 30, 'غروب الشمس', {fs: 12, w: 600}) + `<circle cx="${px(0)}" cy="${y}" r="7" fill="#f5a524"/>`;
+  if (maj > 0) s += `<circle cx="${px(maj)}" cy="${y}" r="7" fill="#64748b"/>` + T(px(maj), y + 30, `غروب الهلال: مكث ${maj.toFixed(0)} د (${v.lag.toFixed(1)}°)`, {fs: 12, w: 600, c: 'accent'});
+  if (lagMin !== null && lagMin > 0) s += L(px(lagMin), y - 12, px(lagMin), y + 12, 'ink', {w: 1.5}) + T(px(lagMin), y - 18, `الحساب الحديث ${lagMin.toFixed(0)} د`, {fs: 11, c: 'muted'});
+  for (let m = 0; m <= mx; m += 15) s += T(px(m), H - 6, String(m), {fs: 10, c: 'muted'});
+  s += T(W / 2, 16, 'قوس المكث: كل درجة = 4 دقائق', {fs: 12, c: 'muted'});
+  return svgEl(W, H, s);
+}
+
+// 4) مقاييس الأقوال: كل قيمة مقابل حدودها
+function gaugesSVG(v) {
+  const rows = [
+    ['قوس المكث', v.lag, [[8, 'الثاني'], [12, 'الأول']], 30],
+    ['قوس الرؤية', v.arcv, [[12, 'الأول']], 30],
+    ['قوس الارتفاع', v.alt, [[7, 'الثاني'], [10, 'الأول']], 30],
+    ['قوس النور', v.nur, [[10, 'الثاني']], 30],
+    ['S المتأخرين', v.S, [[7, ''], [10, ''], [13, '']], 30]
+  ];
+  const W = 640, rh = 60, H = rows.length * rh + 14, x0 = W - 130, x1 = 40;
+  const px = val => x0 - Math.max(0, Math.min(val, 30)) / 30 * (x0 - x1);
+  let s = '';
+  rows.forEach(([name, val, th], i) => {
+    const y = 32 + i * rh;
+    s += T(W - 8, y + 5, name, {a: 'start', fs: 13, w: 600});
+    if (name.startsWith('S')) {
+      [[0, 7, 'g0'], [7, 10, 'g1'], [10, 13, 'g2'], [13, 30, 'g3']].forEach(([a, b2, c]) => s += `<rect x="${px(b2)}" y="${y - 6}" width="${px(a) - px(b2)}" height="12" fill="var(--${c})" opacity=".35"/>`);
+    } else s += `<rect x="${x1}" y="${y - 6}" width="${x0 - x1}" height="12" fill="var(--line)"/>`;
+    const ok = th.every(([t]) => val >= t), some = th.some(([t]) => val >= t);
+    const col = name.startsWith('S') ? 'ink' : ok ? 'g3' : some ? 'g1' : 'g0';
+    s += `<rect x="${px(val)}" y="${y - 3}" width="${x0 - px(val)}" height="6" fill="var(--${col})"/>`;
+    s += `<circle cx="${px(val)}" cy="${y}" r="6" fill="var(--${col})"/>`;
+    th.forEach(([t, lab]) => { s += L(px(t), y - 11, px(t), y + 11, 'ink', {w: 1.5}) + T(px(t), y + 23, `${t}°${lab ? ' ' + lab : ''}`, {fs: 10, c: 'muted'}); });
+    s += T(px(val), y - 14, `${val.toFixed(1)}°`, {fs: 13, w: 700, c: col});
+  });
+  return svgEl(W, H, s);
+}
+
+function renderViz(v, c, lagMin, s) {
+  const box = $('vizCard');
+  if (v.grade === 'none' || v.lag === undefined) { box.innerHTML = '<h2>رسم القيم</h2><p class="note">لا يمكن الرسم: الشمس أو القمر لا يغرب في هذا الموضع في هذا اليوم.</p>'; return; }
+  box.innerHTML = `<h2>رسم القيم — ${s.name}</h2>
+  <div class="viz">
+    <figure><figcaption>السماء الغربية لحظة غروب الشمس (الدرجات بمقياسٍ واحد أفقيًّا ورأسيًّا)</figcaption>${skySVG(v, s.lat)}</figure>
+    <figure><figcaption>فلك البروج: البعد وقت الزوال، ومقوّما النيرين عند الرؤية، واختلاف المنظر، والعرض</figcaption>${eclSVG(v, c)}
+      <figcaption style="margin-top:10px">الزمن بعد غروب الشمس</figcaption>${timeSVG(v, lagMin)}</figure>
+    <figure class="wide"><figcaption>القيم مقابل حدود الأقوال الثلاثة (الشرطة السوداء حدٌّ، والنقطة القيمة)</figcaption>${gaugesSVG(v)}</figure>
+  </div>`;
 }
 
 // ---------------------------------------------------------------- الأحداث والبدء
