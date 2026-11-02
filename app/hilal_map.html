@@ -445,7 +445,7 @@ function skySVG(v, phi) {
   b += `<circle cx="${px(xs1)}" cy="${py(-v.arcv)}" r="8" fill="#f5a524" opacity=".55"/>` + T(px(xs1), py(-v.arcv) + 22, 'الشمس عند غروب الهلال', {fs: 11});
   b += `<circle cx="${px(xm0)}" cy="${py(v.alt)}" r="8" fill="#64748b"/><path d="M${px(xm0) + 2},${py(v.alt) - 8} a8,8 0 0,0 0,16 a5,8 0 0,1 0,-16z" fill="#fde68a" transform="rotate(${-Math.atan2(py(v.alt) - hz, px(xm0) - px(xs0)) * 180 / Math.PI} ${px(xm0)} ${py(v.alt)})"/>`;
   b += T(px(xm0), py(v.alt) - 13, 'الهلال', {fs: 12, w: 700});
-  b += `<circle cx="${px(xm1)}" cy="${hz}" r="4" fill="none" stroke="var(--muted)"/>` + T(px(xm1), hz + 58, `موضع غروب الهلال (سعة مغربه ${v.ampM.toFixed(1)}°)`, {fs: 11, c: 'muted'});
+  b += `<circle cx="${px(xm1)}" cy="${hz}" r="4" fill="none" stroke="var(--muted)"/>` + T(px(xm1), hz - 8, `غروب الهلال (سعة ${v.ampM.toFixed(1)}°)`, {fs: 10, c: 'muted'});
   return svgEl(W, H, b);
 }
 
