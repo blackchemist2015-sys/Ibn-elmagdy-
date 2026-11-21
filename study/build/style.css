@@ -18,3 +18,5 @@ math{direction:ltr}
 html,body{overflow-x:hidden}
 math[display=block]{max-width:100%;font-size:100%}
 table{table-layout:auto;word-break:break-word}
+p,li{text-align:justify;text-justify:inter-word}
+figcaption,p.caption{text-align:center}

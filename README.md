@@ -8,8 +8,8 @@
 
 | الملف | المحتوى |
 |---|---|
-| `study/ibn_al_majdi_study.pdf` | الدراسة كاملة (PDF، 80 صفحة، 49 شكلًا) |
-| `study/ibn_al_majdi_study.docx` | الدراسة بصيغة Word (معادلات Word أصلية قابلة للتحرير) |
+| `study/ibn_al_majdi_study.pdf` | الدراسة كاملة (PDF، 89 صفحة، 54 شكلًا) |
+| `study/ibn_al_majdi_study.docx` | الدراسة بصيغة Word (معادلات Word أصلية، وخط Amiri مضمَّن في الملف) |
 | `study/ibn_al_majdi_study.html` | الدراسة صفحة ويب مستقلة |
 | `study/study.md` | المصدر (Markdown + LaTeX) |
 | `figures/` | 35 شكلًا: الفلك المملوكي، شيوخ ابن المجدي، الكرة السماوية، أعمال الربع، الظل والعصر والقبلة، المحفوظان، فلك القمر، اختلاف المنظر، الأقواس الخمسة، المعيار... |
