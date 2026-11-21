@@ -755,3 +755,23 @@ if __name__ == '__main__':
               c15_moon_orbit, c16_baht, c17_parallax, c18_lag, c19_phases, c20_day29, c21_examples,
               c22_confusion, c23_runs, c24_variables_map]:
         f()
+
+
+def c25_zones():
+    """مناطق قول المتأخرين على مستوى (البعد المطلق، قوس الرؤية) — رسم وصفي بلا بيانات"""
+    fig, ax = plt.subplots(figsize=(9, 7.5))
+    x = np.linspace(0, 30, 300)
+    zones = [(0, 7, '#f3c4c4', 'لا تجوز رؤيته'), (7, 10, '#f8deb0', 'جائزة قريبة من الخفاء'),
+             (10, 13, '#d4ecc4', 'جائزة قريبة إلى البيان'), (13, 40, '#a9d8b8', 'يُرى بيّنًا')]
+    for lo, hi, c, t in zones:
+        ax.fill_between(x, np.clip(2 * lo - x, 0, 30), np.clip(2 * hi - x, 0, 30), color=c)
+    for v in (7, 10, 13):
+        ax.plot(x, 2 * v - x, color=INK, lw=1.2)
+    for (lo, hi, c, t), (px, py) in zip(zones, [(2.2, 3.0), (5.6, 10.6), (8.8, 13.6), (17, 17)]):
+        ax.text(px, py, t, fontsize=13, ha='center', rotation=-38 if hi < 40 else 0)
+    ax.text(15, 28, 'S = ½ (قوس الرؤية + البعد المطلق)', fontsize=13, ha='center',
+            bbox=dict(fc='white', ec=GREY))
+    ax.set_xlim(0, 30); ax.set_ylim(0, 30)
+    ax.set_xlabel('البعد المطلق (درجة)'); ax.set_ylabel('قوس الرؤية (درجة)')
+    ax.set_title('قول المتأخرين: كلما زاد البعد أو قوس الرؤية، انتقل الهلال من منطقةٍ إلى التي فوقها', fontsize=13)
+    save(fig, 'c25_zones.png')
