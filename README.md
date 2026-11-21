@@ -8,7 +8,7 @@
 
 | الملف | المحتوى |
 |---|---|
-| `study/ibn_al_majdi_study.pdf` | الدراسة كاملة (PDF، 62 صفحة، 35 شكلًا) |
+| `study/ibn_al_majdi_study.pdf` | الدراسة كاملة (PDF، 80 صفحة، 49 شكلًا) |
 | `study/ibn_al_majdi_study.docx` | الدراسة بصيغة Word (معادلات Word أصلية قابلة للتحرير) |
 | `study/ibn_al_majdi_study.html` | الدراسة صفحة ويب مستقلة |
 | `study/study.md` | المصدر (Markdown + LaTeX) |
@@ -17,6 +17,7 @@
 | `code/analysis.py` | حساب متغيرات الهلال لـ2020 أمسية في القاهرة ← `data/hilal_cairo.csv` |
 | `code/stats.py`، `code/lag_nights.py` | الإحصاءات ← `data/summary.json`، `data/lag_nights.json` |
 | `code/figures.py`، `code/concepts.py` | الرسوم البيانية ورسوم المفاهيم |
+| `code/ghunya.py`، `code/ghunya_figs.py` | اختبار فصل الهلال في «غنية الفهيم» ورسومه ← `data/ghunya*.json` |
 | `source/` | النص المرقون للرسالة (نسخة 1237 هـ، إعداد د. نجلاء شمس) |
 
 ## خريطة معيار ابن المجدي (برنامج تفاعلي)
