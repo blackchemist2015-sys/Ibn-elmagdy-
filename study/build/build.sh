@@ -12,3 +12,4 @@ build () {   # $1 = ملف المصدر، $2 = اسم الناتج
 build study.md ibn_al_majdi_study
 build criterion.md ibn_al_majdi_criterion
 build ifta_project.md ibn_al_majdi_ifta_project
+build ifta_proposal.md ibn_al_majdi_ifta_proposal

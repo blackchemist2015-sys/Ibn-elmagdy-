@@ -431,7 +431,7 @@ function skySVG(v, phi) {
   // قوس الرؤية
   const xv = px(xs1) - 22;
   b += L(xv, hz, xv, py(-v.arcv), 'g0', {arrow: 2});
-  b += T(xv - 6, (hz + py(-v.arcv)) / 2, `قوس الرؤية ${v.arcv.toFixed(1)}°`, {a: 'start', c: 'g0', w: 600});
+  b += T(xv - 6, Math.max((hz + py(-v.arcv)) / 2, hz + 52), `قوس الرؤية ${v.arcv.toFixed(1)}°`, {a: 'start', c: 'g0', w: 600});
   // قوس النور
   b += L(px(xs0), py(0), px(xm0), py(v.alt), 'g3', {w: 2});
   const mx = px(xs0) + 0.62 * (px(xm0) - px(xs0)), my = py(0) + 0.62 * (py(v.alt) - py(0));

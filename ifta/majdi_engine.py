@@ -98,7 +98,12 @@ def modern(day: dt.date, lat: float, lon: float, tz_hours: float = 2.0) -> dict:
         return {}
     ms = A.SearchRiseSet(A.Body.Moon, obs, A.Direction.Set, start, 1.2)
     lag_min = (ms.ut - ss.ut) * 1440 if ms is not None else float('nan')
-    nm = A.SearchMoonPhase(0, ss.AddDays(-30), 30)       # آخر اجتماع قبل الغروب
+    nm = A.SearchMoonPhase(0, ss.AddDays(-32), 32)       # آخر اجتماع قبل الغروب
+    while nm is not None:
+        nx = A.SearchMoonPhase(0, nm.AddDays(1), 31)
+        if nx is None or nx.ut > ss.ut:
+            break
+        nm = nx
     age_h = (ss.ut - nm.ut) * 24 if nm is not None and nm.ut <= ss.ut else float('nan')
     tb = ss.AddDays(max(lag_min, 0) * 4 / 9 / 1440)       # أفضل وقت (يالوب)
     def topo(body):
